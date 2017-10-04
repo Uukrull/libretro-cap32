@@ -3217,7 +3217,7 @@ void Keyhdl(unsigned char cpc_key,int press){
 
 void retro_joy1(unsigned char joy1)
 {
-   //0x01,0x02,0x04,0x08,0x80
+/*   //0x01,0x02,0x04,0x08,0x80
    // UP  DWN  LEFT RGT  BTN0
    // 0    1     2   3    4
 
@@ -3303,12 +3303,11 @@ void retro_joy1(unsigned char joy1)
          jflag[5]=0;
       }
    }
-
-}
+*/}
 
 void retro_joy0(unsigned char joy0)
 {
-   //0x01,0x02,0x04,0x08,0x80
+/*   //0x01,0x02,0x04,0x08,0x80
    // UP  DWN  LEFT RGT  BTN0
    // 0    1     2   3    4
 
@@ -3394,7 +3393,7 @@ void retro_joy0(unsigned char joy0)
          jflag0[5]=0;
       }
    }
-}
+*/}
 
 void mixsnd(void)
 {
@@ -3556,6 +3555,7 @@ int detach_disk(int drive)
 
 int loadadsk (char *arv,int drive)
 {
+   int len = strlen(arv);
    if( HandleExtension(arv,"DSK") || HandleExtension(arv,"dsk") )
    {
       if(drive==0)
@@ -3571,13 +3571,26 @@ int loadadsk (char *arv,int drive)
 			retro_disk_auto();
 		 }
       have_DSK = true;
-      sprintf(RPATH,"%s%d.SNA",arv,drive);		
+      sprintf(RPATH,"%s",arv);
+      RPATH[len-3] = 's';
+      RPATH[len-2] = 'n';
+      RPATH[len-1] = 'a';
    }
    else if( HandleExtension(arv,"sna") || HandleExtension(arv,"SNA") )
    {
+      char dsk[512];
       snapshot_load (arv);
       have_SNA = true;
       sprintf(RPATH,"%s",arv);
+      strcpy(dsk, arv);
+      dsk[len-3] = 'd';
+      dsk[len-2] = 's';
+      dsk[len-1] = 'k';
+      if(dsk_load( dsk, &driveA, 'A') == 0)
+      {
+        sprintf(DISKA_NAME,"%s",dsk);
+        have_DSK = true;
+      }
    }
    return 0;
 }
